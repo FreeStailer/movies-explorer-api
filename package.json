@@ -1,7 +1,7 @@
 {
   "name": "movies-explorer-api",
   "version": "1.0.0",
-  "description": "Server for Mesto with Express",
+  "description": "Server for KinoPoisk with Express",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
