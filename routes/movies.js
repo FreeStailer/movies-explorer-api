@@ -42,7 +42,7 @@ router.post('/movies', celebrate({
       .messages({
         'any.required': 'Поле "Ссылка" должно быть заполнено',
       }),
-    movieId: Joi.string().required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required().pattern(/^[а-яА-ЯЁё0-9\s]+$/),
     nameEN: Joi.string().required().pattern(/^[a-zA-Z0-9\s]+$/),
   }),
