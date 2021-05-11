@@ -3,14 +3,13 @@
 logs
 *.log
 npm-debug.log*
-.eslintcache
 
 # Dependency directory
 node_modules
+build
 
 # Optional npm cache directory
 .npm
-.env
 
 # Optional REPL history
 .DS_Store
