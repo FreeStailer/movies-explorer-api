@@ -1,6 +1,7 @@
 const Movie = require('../models/movie');
 const NotFoundError = require('../utils/notfound-error.js');
 const BadRequestError = require('../utils/badrequest-error.js');
+const ForbiddenError = require('../utils/forbidden-error');
 const ConflictError = require('../utils/conflict-error.js');
 
 const getMovies = (req, res, next) => {
@@ -55,15 +56,15 @@ const createMovie = (req, res, next) => {
 
 const deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
+    .orFail(new NotFoundError('Ничего не найдено'))
+  // eslint-disable-next-line consistent-return
     .then((movie) => {
-      if (!movie || movie.owner.toString() !== req.user._id) {
-        throw new NotFoundError('Уточните ИД фильма, так как  у пользователя нет такого Id');
+      if (!movie.owner.equals(req.user._id)) {
+        next(new ForbiddenError('Попытка удалить чужой фильм'));
+      } else {
+        return movie.remove()
+          .then(() => res.send({ message: `Киношка ${movie.nameRU} удалена из избранного` }));
       }
-      Movie.findByIdAndDelete(req.params.movieId)
-        .then(() => {
-          res.send({ message: 'Удален из избранного' });
-        })
-        .catch(next);
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -72,6 +73,7 @@ const deleteMovie = (req, res, next) => {
       if (err.name === 'MongoError' || err.code === '11000') {
         throw new ConflictError('Конфликтная ошибка');
       }
+      throw err;
     })
     .catch(next);
 };
